@@ -1,0 +1,139 @@
+---
+env:
+  contexts:
+  - name: "dvwa"
+    urls:
+    - "http://10.0.2.4/DVWA"
+    includePaths:
+    - "http://10.0.2.4/DVWA.*"
+    excludePaths: []
+    authentication:
+      method: "browser"
+      parameters:
+        loginPageUrl: "http://10.0.2.4/DVWA/login.php"
+        loginPageWait: 2
+        browserId: "firefox-headless"
+      verification:
+        method: "autodetect"
+        loggedInRegex: "\\Q 200 OK\\E"
+        loggedOutRegex: "\\Q 302 Found\\E"
+        pollFrequency: 60
+        pollUnits: "requests"
+        pollUrl: "http://10.0.2.4/DVWA/index.php"
+        pollPostData: ""
+    sessionManagement:
+      method: "autodetect"
+      parameters: {}
+    technology:
+      exclude: []
+    users:
+    - name: "admin"
+      credentials:
+        password: "password"
+        username: "admin"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+  vars: {}
+jobs:
+- parameters:
+    maxAlertsPerRule: 0
+    scanOnlyInScope: true
+    maxBodySizeInBytesToScan: 0
+    enableTags: false
+    disableAllRules: false
+  rules: []
+  name: "passiveScan-config"
+  type: "passiveScan-config"
+- parameters:
+    user: "admin"
+  requests:
+  - url: "http://10.0.2.4/DVWA/index.php"
+    name: ""
+    method: "GET"
+    httpVersion: "HTTP/1.1"
+    headers: []
+    data: ""
+    responseCode: 200
+  name: "requestor"
+  type: "requestor"
+- parameters:
+    context: "dvwa"
+    user: "admin"
+    url: ""
+    maxDuration: 0
+    maxDepth: 0
+    maxChildren: 0
+  name: "spider"
+  type: "spider"
+- parameters:
+    context: "dvwa"
+    user: "admin"
+    url: ""
+    maxDuration: 30
+    maxCrawlDepth: 10
+    numberOfBrowsers: 8
+    inScopeOnly: true
+    runOnlyIfModern: false
+  name: "spiderAjax"
+  type: "spiderAjax"
+- parameters:
+    time: "10"
+    fileName: ""
+  name: "delay"
+  type: "delay"
+- parameters:
+    maxDuration: 0
+  name: "passiveScan-wait"
+  type: "passiveScan-wait"
+- parameters:
+    context: "dvwa"
+    user: "admin"
+    policy: ""
+    maxRuleDurationInMins: 5
+    maxScanDurationInMins: 180
+    maxAlertsPerRule: 0
+  policyDefinition:
+    defaultStrength: "medium"
+    defaultThreshold: "medium"
+    rules: []
+  name: "activeScan"
+  type: "activeScan"
+- confidences:
+  - low
+  - medium
+  - high
+  - confirmed
+  name: report
+  parameters:
+    displayReport: false
+    reportDescription: ''
+    reportDir: /home/vboxuser/siaas-agent/Reports
+    reportFile: dvwa
+    reportTitle: ZAP Scanning Report
+    template: risk-confidence-html
+    theme: original
+  risks:
+  - low
+  - medium
+  - high
+  sections:
+  - siteRiskCounts
+  - responseBody
+  - appendix
+  - alertTypes
+  - responseHeader
+  - alertTypeCounts
+  - riskConfidenceCounts
+  - alerts
+  - aboutThisReport
+  - contents
+  - requestBody
+  - reportDescription
+  - reportParameters
+  - requestHeader
+  - summaries
+  sites: []
+  type: report
+
